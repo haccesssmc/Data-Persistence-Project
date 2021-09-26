@@ -60,13 +60,13 @@ public class GameManager : MonoBehaviour
     public void Save()
     {
         string json = JsonUtility.ToJson(data);
-        string path = Application.dataPath + "/save.json";
+        string path = Application.persistentDataPath + "/save.json";
         File.WriteAllText(path, json);
     }
 
     public void Load()
     {
-        string path = Application.dataPath + "/save.json";
+        string path = Application.persistentDataPath + "/save.json";
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
