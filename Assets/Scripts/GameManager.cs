@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public string userName;
     public int result;
 
-    private SaveData data = new SaveData();
+    public SaveData data;
 
     private void Awake()
     {
@@ -72,6 +72,10 @@ public class GameManager : MonoBehaviour
             string json = File.ReadAllText(path);
             data = JsonUtility.FromJson<SaveData>(json);
         }
+        else
+        {
+            data = new SaveData();
+        }
     }
 
     public List<string> GetUsersNames()
@@ -121,37 +125,93 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public bool SetNewResult(int res)
+    {
+        if (userName == "" || data.currentUserID < 0) return false;
+        if (res > result)
+        {
+            result = res;
+            data.results[data.currentUserID] = res;
+            
+            return true;
+        }
+        return false;
+    }
+
     public List<string> GetTopResults()
     {
         List<string> top = new List<string>();
-        List<string> names = data.names;
-        List<int> results = data.results;
+        List<string> allNames = new List<string>();
+        List<int> allResults = new List<int>();
 
-        while(top.Count < 3 && results.Count > 0)
+        foreach (string n in data.names)
+        {
+            allNames.Add(n);
+        }
+        foreach (int r in data.results)
+        {
+            allResults.Add(r);
+        }
+
+        while (top.Count < 3 && allResults.Count > 0)
         {
             int maxResult = 0;
             int id = -1;
-            for(int i = 0; i < results.Count; i++)
+            for(int i = 0; i < allResults.Count; i++)
             {
-                if(results[i] > maxResult)
+                if(allResults[i] > maxResult)
                 {
                     id = i;
-                    maxResult = results[id];
+                    maxResult = allResults[id];
                 }
-                else if(results[i] == 0)
+                else if(allResults[i] == 0)
                 {
-                    results.RemoveAt(i);
-                    names.RemoveAt(i);
+                    allResults.RemoveAt(i);
+                    allNames.RemoveAt(i);
                 }
             }
             if(id > -1)
             {
-                top.Add(name[id] + " : " + results[id]);
-                results.RemoveAt(id);
-                names.RemoveAt(id);
+                top.Add(allNames[id] + " : " + allResults[id]);
+                allResults.RemoveAt(id);
+                allNames.RemoveAt(id);
             }
         }
 
+        return top;
+    }
+
+    public List<int> GetTopResultsInt()
+    {
+        List<int> top = new List<int>();
+        List<int> all = new List<int>();
+        foreach(int res in data.results)
+        {
+            all.Add(res);
+        }
+
+        while (top.Count < 3 && all.Count > 0)
+        {
+            int maxResult = 0;
+            int id = -1;
+            for (int i = 0; i < all.Count; i++)
+            {
+                if (all[i] > maxResult)
+                {
+                    id = i;
+                    maxResult = all[id];
+                }
+                else if (all[i] == 0)
+                {
+                    all.RemoveAt(i);
+                }
+            }
+            if (id > -1)
+            {
+                top.Add(all[id]);
+                all.RemoveAt(id);
+            }
+        }
         return top;
     }
 }

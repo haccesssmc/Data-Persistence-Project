@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -10,9 +11,11 @@ public class MainManager : MonoBehaviour
     public int LineCount = 6;
     public Rigidbody Ball;
 
-    public Text ScoreText;
-    public GameObject GameOverText;
-    
+    public TextMeshProUGUI ScoreText;
+    public TextMeshProUGUI TopScoreText;
+    public GameObject GameOverScreen;
+    public List<GameObject> GameOverTitleTexts;
+
     private bool m_Started = false;
     private int m_Points;
     
@@ -36,6 +39,19 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        SetTopScore(0);
+    }
+
+    bool SetTopScore(int score)
+    {
+        if (GameManager.Instance != null && GameManager.Instance.userName != "")
+        {
+            bool isTop = GameManager.Instance.SetNewResult(score);
+            TopScoreText.text = "Top Score : " + GameManager.Instance.userName + " : " + GameManager.Instance.result;
+            return isTop;
+        }
+        return false;
     }
 
     private void Update()
@@ -57,7 +73,12 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                SceneManager.LoadScene(1);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene(0);
             }
         }
     }
@@ -70,7 +91,28 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > GameManager.Instance.result)
+        {
+            List<int> top = GameManager.Instance.GetTopResultsInt();
+
+            int id = top.Count;
+            for(int i = top.Count; i > 0; i--)
+            {
+                if(m_Points > top[i - 1])
+                {
+                    id = i - 1;
+                }
+            }
+            if (id < 0) id = 0;
+            GameOverTitleTexts[id].SetActive(true);
+        }
+        else
+        {
+            GameOverTitleTexts[4].SetActive(true);
+        }
+
+        SetTopScore(m_Points);
         m_GameOver = true;
-        GameOverText.SetActive(true);
+        GameOverScreen.SetActive(true);
     }
 }

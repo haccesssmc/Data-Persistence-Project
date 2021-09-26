@@ -88,6 +88,7 @@ public class MainMenu : MonoBehaviour
             {
                 topObj.GetComponent<TextMeshProUGUI>().text = "";
             }
+            i++;
         }
     }
 
@@ -109,5 +110,15 @@ public class MainMenu : MonoBehaviour
     {
         GameManager.Instance.SetActiveUser(id);
         onLoadUsersScreen();
+    }
+
+    public void StartGame()
+    {
+        GameManager.Instance.StartGame();
+    }
+
+    public void ExitGame()
+    {
+        GameManager.Instance.Exit();
     }
 }
