@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public string userName;
     public int result;
 
-    public SaveData data;
+    private SaveData data;
 
     private void Awake()
     {
@@ -86,6 +86,11 @@ public class GameManager : MonoBehaviour
     public List<int> GetUsersResults()
     {
         return data.results;
+    }
+
+    public int GetCurrentUserID()
+    {
+        return data.currentUserID;
     }
 
     public void AddNewUser(string name)

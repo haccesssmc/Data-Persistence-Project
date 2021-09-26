@@ -10,6 +10,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] TextMeshProUGUI resultText;
     [SerializeField] GameObject addNewUserObj;
     [SerializeField] List<GameObject> usersInfo;
+    [SerializeField] List<GameObject> usersInfoImages;
     [SerializeField] List<GameObject> topInfo;
     
 
@@ -72,6 +73,21 @@ public class MainMenu : MonoBehaviour
                 GameObject.Find(userInfoName).GetComponent<TextMeshProUGUI>().text = userNames[i];
             }
         }
+
+        int userID = GameManager.Instance.GetCurrentUserID();
+        int id = 0;
+        foreach(GameObject infoBg in usersInfoImages)
+        {
+            if(id == userID)
+            {
+                infoBg.SetActive(true);
+            }
+            else
+            {
+                infoBg.SetActive(false);
+            }
+            id++;
+        }
     }
 
     public void onLoadResultsScreen()
@@ -109,7 +125,7 @@ public class MainMenu : MonoBehaviour
     public void SelectUser(int id)
     {
         GameManager.Instance.SetActiveUser(id);
-        onLoadUsersScreen();
+        onLoadMainScreen();
     }
 
     public void StartGame()
